@@ -1,0 +1,59 @@
+#+TITLE: Lean demo
+#+AUTHOR: Jesse Michael Han
+
+* Getting started
+ - [X] What is Lean?
+   - Lean is an *interactive theorem prover* (v1 released in 2016). It is also a programming language (for example, the Lean package manager ~leanpkg~ is written in Lean.) The current version of Lean (Lean 3) is mostly used as an interactive theorem prover. Lean 4 is currently being developed by Leo de Moura at Microsoft Research.
+
+ - Like Coq, Lean implements dependent type theory with inductive types (calculus of inductive constructions). It adds a few more things, like built-in support for quotient types, proof-irrelevance (i.e. proofs of a proposition are definitionally equal), and a noncomputable choice principle.
+
+   - Very active (and friendly, come say hi!) community of users who hang out at the Lean Zulip chat (https://leanprover.zulipchat.com).
+
+   - Notable projects written in Lean.
+
+     - *mathlib*, a community-driven (i.e. cyber-Bourbaki :^)) state-of-the-art mathematical components library (https://www.github.com/leanprover-community/mathlib)
+
+     - Formalization of *perfectoid spaces*, a hot new topic in arithmetic geometry (by Kevin Buzzard, Patrick Massot, Johan Commelin)
+
+     - Formalization of the solution to the *cap-set conjecture* (a result recently published in the Annals, due to Ellenberg and Gijswijt), implemented by Rob Lewis, Johannes Hözl, and Sanders Dahmen
+
+     - Extensive homotopy theory formalization by Reid Barton.
+
+     - A formal proof of the *independence of the continuum hypothesis* (myself and Floris van Doorn).
+
+
+ - [X] Mathlib and the ~leanprover-community~ toolchain
+   - [[https://github.com/leanprover-community/mathlib/tree/master/docs/install][Installation docs]] at mathlib repo (currently only Emacs and VSCode are supported editors)
+
+   - As of 1-2 months, streamlined project (and Lean executable) management written by Patrick Massot and others in the Lean prover community: ~leanproject~! Install with ~pip3 install --user leanproject~.
+
+ - [X] Creating a Lean project
+   ~leanproject new && leanproject up~
+
+Note: the only supported editors currently are Emacs and VSCode.
+
+I use Emacs; most of the community uses VSCode.
+
+* Some theorem proving
+First exercises
+#+begin_src lean
+variables {α β : Type} (p q : α → Prop) (r : α → β → Prop)
+
+example : (∀ x, p x) ∧ (∀ x, q x) → ∀ x, p x ∧ q x := sorry
+
+example : (∀ x, p x → q x) → (∀ x, p x) → ∀ x, q x := sorry
+
+example : (∀ x, p x) ∨ (∀ x, q x) → ∀ x, p x ∨ q x := sorry
+
+example : (∃ x, p x ∧ q x) → ∃ x, p x := sorry
+
+example : (∃ x, ∀ y, r x y) → ∀ y, ∃ x, r x y := sorry
+#+end_src
+
+(Refer to ~src/helloworld.lean~)
+
+* Conclusion
+** Useful Lean links
+ - Kevin Buzzard's gamified introduction to Lean: [[http://wwwf.imperial.ac.uk/~buzzard/xena/natural_number_game/][The Natural Number Game]]
+ - [[https://leanprover.github.io/logic_and_proof/][Logic and Proof]]: a logic textbook for a first course in proofs that teaches Lean at the same time.
+ - The [[https://github.com/blanchette/logical_verification_2020/raw/master/hitchhikers_guide.pdf][Hitchhiker's Guide to Logical Verification]]: textbook for a first course in interactive theorem proving.
