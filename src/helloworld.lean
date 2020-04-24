@@ -34,7 +34,7 @@ example : (∃ x, ∀ y, r x y) → ∀ y, ∃ x, r x y := by tidy
 end warm_up
 
 /-
-We're going to solve a simplified version of the `coffee can problem`, due to Robert Gries' `The Science of Programming` (note: really good read).
+We're going to solve a simplified version of the `coffee can problem`, due to David Gries' `The Science of Programming` (note: really good read).
 
 Suppose you have a coffee can filled with finitely many white and black beans. You have an infinite supply of white and black beans outside the can.
 
