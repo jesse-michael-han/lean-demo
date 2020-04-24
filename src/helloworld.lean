@@ -1,5 +1,6 @@
 import tactic
 import data.nat.parity
+import system.io
 
 section warm_up
 
@@ -203,3 +204,7 @@ end tactic_parser
 end interactive
 end tactic
 
+-- run this file with `lean --run hello_world.lean`
+def main : io unit :=
+do trace (string.join ((by apply_instance : has_repr beans).repr <$> [white, black, white, black, black, black, white])) (return ()),
+   trace ("Hello world!") (return ())
