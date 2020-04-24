@@ -13,13 +13,13 @@
 
      - *mathlib*, a community-driven (i.e. cyber-Bourbaki :^)) state-of-the-art mathematical components library (https://www.github.com/leanprover-community/mathlib)
 
-     - Formalization of *perfectoid spaces*, a hot new topic in arithmetic geometry (by Kevin Buzzard, Patrick Massot, Johan Commelin)
+     - [[https://leanprover-community.github.io/lean-perfectoid-spaces/][Formalization]] of *perfectoid spaces*, a hot new topic in arithmetic geometry (by Kevin Buzzard, Patrick Massot, Johan Commelin)
 
-     - Formalization of the solution to the *cap-set conjecture* (a result recently published in the Annals, due to Ellenberg and Gijswijt), implemented by Rob Lewis, Johannes Hözl, and Sanders Dahmen
+     - [[https://github.com/lean-forward/cap_set_problem][Formalization]] of the solution to the *cap-set conjecture* (a result recently published in the Annals, due to Ellenberg and Gijswijt), implemented by Rob Lewis, Johannes Hözl, and Sanders Dahmen
 
-     - Extensive homotopy theory formalization by Reid Barton.
+     - Extensive [[https://github.com/rwbarton/lean-homotopy-theory][homotopy theory formalization]] by Reid Barton.
 
-     - A formal proof of the *independence of the continuum hypothesis* (myself and Floris van Doorn).
+     - A [[https://www.github.com/flypitch/flypitch][formal proof]] of the *independence of the continuum hypothesis* (myself and Floris van Doorn).
 
 
  - [X] Mathlib and the ~leanprover-community~ toolchain
