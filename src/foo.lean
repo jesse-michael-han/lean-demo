@@ -20,6 +20,7 @@ end
 
 #print and
 
+-- blast our way to the end
 
 example : (∀ x, p x → q x) → (∀ x, p x) → ∀ x, q x := by finish
 
@@ -27,7 +28,7 @@ example : (∀ x, p x) ∨ (∀ x, q x) → ∀ x, p x ∨ q x := by finish
 
 example : (∃ x, p x ∧ q x) → ∃ x, p x := by finish
 
-example : (∃ x, ∀ y, r x y) → ∀ y, ∃ x, r x y := sorry -- exercise for the people at home :^)
+example : (∃ x, ∀ y, r x y) → ∀ y, ∃ x, r x y := by tidy
 
 end warm_up
 
@@ -145,3 +146,60 @@ begin
                                     -- involving constructors
       { intro H, exfalso, rw H₁ at H, rw H₂ at H, simp at H, exact H }}
 end
+
+def coffee2 : list beans → list beans := λ bns,
+match bns with
+| [] := []
+| bns := let num_black_beans := count_beans black bns in
+         if (even num_black_beans) then [white] else [black]
+end
+
+theorem coffee_coffee2 : coffee = coffee2 :=
+begin
+  funext bns, cases bns,
+    { simp[coffee2] },
+    { by_cases H : even (count_beans black $ bns_hd :: bns_tl),
+      { simp [coffee2, *], rwa ← coffee_can_problem at H },
+      { simp [coffee2, *], rw ← coffee_can_problem at H, finish using coffee_lemma_2 }}
+end
+
+namespace tactic
+namespace interactive
+namespace tactic_parser
+
+section metaprogramming
+
+@[reducible]meta def tactic_parser : Type → Type := state_t string tactic
+
+meta def tactic_parser.run {α} : tactic_parser α → string → tactic α :=
+λ p σ, prod.fst <$> state_t.run p σ
+
+meta def parse_char : tactic_parser string :=
+{ run := λ s, match s with
+              | ⟨[]⟩ := tactic.failed
+              | ⟨(c::cs)⟩ := prod.mk <$> return ⟨[c]⟩ <*> return ⟨cs⟩
+              end }
+
+meta def failed {α} : tactic_parser α := {run := λ s, tactic.failed}
+
+meta def parse_bean : tactic_parser beans :=
+do c ← parse_char,
+   if c = "1" then return white else
+   if c = "0" then return black else failed
+
+meta def repeat {α} : tactic_parser α → tactic_parser (list α) :=
+λ p, (list.cons <$> p <*> repeat p) <|> return []
+
+meta instance format_of_repr {α} [has_repr α] : has_to_tactic_format α :=
+{ to_tactic_format := λ b,
+    return (let f := (by apply_instance : has_repr α).repr in format.of_string (f b))}
+
+run_cmd ((repeat parse_bean).run "101010111001" >>= tactic.trace)
+
+-- #eval some_more_beans
+
+end metaprogramming
+end tactic_parser
+end interactive
+end tactic
+
