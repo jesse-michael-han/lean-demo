@@ -204,6 +204,100 @@ end tactic_parser
 end interactive
 end tactic
 
+/-
+  Some set theory, using Aczel sets (see mathlib's set_theory/zfc.lean for a more thorough development, or Flypitch for a Boolean-valued version)
+-/
+universe u
+
+inductive pSet : Type (u+1) -- Aczel sets
+| mk (α : Type u) (A : α → pSet)
+
+namespace pSet
+
+def eqv : pSet → pSet → Prop
+| (⟨α, A⟩) (⟨α', A'⟩) := (∀ a : α, ∃ a' : α', eqv (A a)  (A' a')) ∧ (∀ a' : α', ∃ a : α, eqv (A a) (A' a'))
+
+def mem : pSet → pSet → Prop
+| x (⟨α, A⟩) := ∃ a : α, eqv x (A a)
+
+infix `∈ˢ`:1024 := pSet.mem
+infix `=ˢ`:1024 := pSet.eqv
+
+end pSet
+
+-- this proof actually doesn't use anything and just works for any binary relation
+-- lemma russell (x : pSet.{u}) (Hx : (∀ y : pSet.{u}, (y ∈ˢ x ↔ (¬ y ∈ˢ y)))): (x ∈ˢ x) ∧ (¬ x ∈ˢ x) :=
+-- begin
+--   refine ⟨_,_⟩,
+--   { classical, by_contradiction, have := (Hx x).mpr ‹_›, contradiction },
+--   { classical, by_contradiction, have := (Hx x).mp ‹_›, contradiction }
+-- end
+
+-- indeed
+lemma russell_aux {α : Type*} {mem : α → α → Prop} {x : α} (Hx : (∀ a : α, mem a x ↔ ¬ mem a a)) : mem x x ∧ ¬ mem x x :=
+begin
+  refine ⟨_,_⟩,
+  { classical, by_contradiction, have := (Hx x).mpr ‹_›, contradiction },
+  { classical, by_contradiction, have := (Hx x).mp ‹_›, contradiction }  
+end
+
+lemma russell (x : pSet.{u}) (Hx : (∀ y : pSet.{u}, (y ∈ˢ x ↔ (¬ y ∈ˢ y)))): (x ∈ˢ x) ∧ (¬ x ∈ˢ x) := russell_aux ‹_›
+
+@[simp]lemma eqv_refl {x : pSet} : x =ˢ x := by induction x; tidy
+
+lemma eqv_trans {x y z : pSet} (H₁ : x =ˢ y) (H₂ : y =ˢ z) : x =ˢ z :=
+begin
+  induction x with α₁ A₁ generalizing y z, induction y with α₂ A₂, induction z with α₃ A₃,
+  cases H₁ with H₁_left H₁_right, cases H₂ with H₂_left H₂_right,
+  refine ⟨_,_⟩; intro i,
+    { cases H₁_left i with j Hj, cases H₂_left j with k Hk,
+      refine ⟨k, _⟩, apply x_ih, exact Hj, exact Hk, },
+    { cases H₂_right i with j Hj, cases H₁_right j with k Hk,
+      refine ⟨k, _⟩, apply x_ih, exact Hk, exact Hj }
+end
+
+lemma eqv_symm {x y : pSet} (H : x =ˢ y) : y =ˢ x :=
+begin
+  induction x with α A generalizing y, induction y with α' A' generalizing α A,
+  refine ⟨_,_⟩; intro i; cases H with H₁ H₂,
+    { specialize H₂ i, cases H₂ with a Ha, use a, finish },
+    { specialize H₁ i, cases H₁ with a' Ha', use a', finish }
+end
+
+lemma eqv.symm {x y} : x =ˢ y ↔ y =ˢ x := ⟨eqv_symm, eqv_symm⟩
+
+@[simp]lemma mem_congr_right {x y z : pSet} (H_mem : x ∈ˢ y) (H_eqv : y =ˢ z) : x ∈ˢ z :=
+begin
+  induction y with α A, induction z with β B,
+  cases H_eqv with H₁ H₂, cases H_mem with a Ha,
+  cases H₁ a with b Hb, use b, exact eqv_trans Ha Hb
+end
+
+@[simp]lemma mem_congr_left {x y z : pSet} (H_mem : x ∈ˢ y) (H_eqv : x =ˢ z) : z ∈ˢ y :=
+begin
+  induction y with α A, cases H_mem with a' Ha', use a', exact eqv_trans (eqv_symm H_eqv) ‹_›
+end
+
+@[simp]lemma mem.mk {α : Type u} {a : α} {A : α → pSet.{u}} : A a ∈ˢ (pSet.mk α A : pSet.{u}) := ⟨a, by simp⟩
+
+lemma mem_iff {x y : pSet.{u}} : x ∈ˢ y ↔ ∃ z : pSet.{u}, z ∈ˢ y ∧ x =ˢ z :=
+begin
+  refine ⟨_,_⟩; intro H,
+    { cases y with α A, cases H with a_x H_a_x,
+      refine ⟨A a_x, ⟨_,_⟩⟩,
+        { simp },
+        { assumption }},
+    { rcases H with ⟨z, ⟨Hz₁, Hz₂⟩⟩, apply mem_congr_left ‹_›, exact eqv_symm ‹_› }
+end
+
+-- technically a consequence of foundation
+lemma foundation {x} : x ∈ˢ x → false :=
+begin
+  intro H_mem_self, induction x with α A,
+  rcases H_mem_self with ⟨a, Ha⟩, apply x_ih a,
+  exact mem_congr_right (mem.mk) ‹_›
+end
+
 -- run this file with `lean --run hello_world.lean`
 def main : io unit :=
 do trace (string.join ((by apply_instance : has_repr beans).repr <$> [white, black, white, black, black, black, white])) (return ()),

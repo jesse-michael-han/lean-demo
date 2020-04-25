@@ -1,8 +1,17 @@
 #+TITLE: Lean demo
 #+AUTHOR: Jesse Michael Han
 
+To compile this project:
+
+#+begin_src 
+pip3 install --user leanproject
+cd lean-demo
+leanproject up
+leanproject build
+#+end_src
+
 * Getting started
- - [X] What is Lean?
+ - What is Lean?
    - Lean is an *interactive theorem prover* (v1 released in 2016). It is also a programming language (for example, the Lean package manager ~leanpkg~ is written in Lean.) The current version of Lean (Lean 3) is mostly used as an interactive theorem prover. Lean 4 is currently being developed by Leo de Moura at Microsoft Research.
 
  - Like Coq, Lean implements dependent type theory with inductive types (calculus of inductive constructions). It adds a few more things, like built-in support for quotient types, proof-irrelevance (i.e. proofs of a proposition are definitionally equal), and a noncomputable choice principle.
@@ -22,12 +31,12 @@
      - A [[https://www.github.com/flypitch/flypitch][formal proof]] of the *independence of the continuum hypothesis* (myself and Floris van Doorn).
 
 
- - [X] Mathlib and the ~leanprover-community~ toolchain
+ - Mathlib and the ~leanprover-community~ toolchain
    - [[https://github.com/leanprover-community/mathlib/tree/master/docs/install][Installation docs]] at mathlib repo (currently only Emacs and VSCode are supported editors)
 
    - As of 1-2 months, streamlined project (and Lean executable) management written by Patrick Massot and others in the Lean prover community: ~leanproject~! Install with ~pip3 install --user leanproject~.
 
- - [X] Creating a Lean project
+ - Creating a Lean project
    ~leanproject new && leanproject up~
 
 Note: the only supported editors currently are Emacs and VSCode.
@@ -57,3 +66,4 @@ example : (∃ x, ∀ y, r x y) → ∀ y, ∃ x, r x y := sorry
  - Kevin Buzzard's gamified introduction to Lean: [[http://wwwf.imperial.ac.uk/~buzzard/xena/natural_number_game/][The Natural Number Game]]
  - [[https://leanprover.github.io/logic_and_proof/][Logic and Proof]]: a logic textbook for a first course in proofs that teaches Lean at the same time.
  - The [[https://github.com/blanchette/logical_verification_2020/raw/master/hitchhikers_guide.pdf][Hitchhiker's Guide to Logical Verification]]: textbook for a first course in interactive theorem proving.
+   
